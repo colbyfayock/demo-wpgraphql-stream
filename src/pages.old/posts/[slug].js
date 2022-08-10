@@ -1,7 +1,7 @@
 import Link from 'next/link';
 import { Helmet } from 'react-helmet';
 
-import { getPostBySlug, getRecentPosts, getRelatedPosts, postPathBySlug } from 'lib/posts';
+import { getPostBySlug, getAllPosts, getRelatedPosts, postPathBySlug } from 'lib/posts';
 import { categoryPathBySlug } from 'lib/categories';
 import { formatDate } from 'lib/datetime';
 import { ArticleJsonLd } from 'lib/json-ld';
@@ -177,14 +177,7 @@ export async function getStaticProps({ params = {} } = {}) {
 }
 
 export async function getStaticPaths() {
-  // Only render the most recent posts to avoid spending unecessary time
-  // querying every single post from WordPress
-
-  // Tip: this can be customized to use data or analytitcs to determine the
-  // most popular posts and render those instead
-
-  const { posts } = await getRecentPosts({
-    count: process.env.POSTS_PRERENDER_COUNT, // Update this value in next.config.js!
+  const { posts } = await getAllPosts({
     queryIncludes: 'index',
   });
 
@@ -198,6 +191,6 @@ export async function getStaticPaths() {
 
   return {
     paths,
-    fallback: 'blocking',
+    fallback: false,
   };
 }
